@@ -1,5 +1,7 @@
 import libtcodpy
 
+LIMIT_FPS = 20
+
 SCREEN_WIDTH = 80
 SCREEN_HEIGHT = 50
 

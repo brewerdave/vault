@@ -1,6 +1,7 @@
 import libtcodpy
 import dungeonmap
 import config
+import components
 import ai
 
 ROOM_MAX_SIZE = 10
@@ -67,7 +68,7 @@ def make_map(player):
                     _create_vertical_tunnel(prev_y, new_y, prev_x)
                     _create_horizontal_tunnel(prev_x, new_x, new_y)
 
-            place_game_objects(new_room)
+            place_map_objects(new_room)
             rooms.append(new_room)
             rooms_amount += 1
 
@@ -95,7 +96,7 @@ def _create_vertical_tunnel(new_map, y1, y2, x):
         new_map.is_transparent[x][y] = True
 
 
-def place_map_objects(room):
+def place_map_objects(new_map, room):
     monster_amount = libtcodpy.random_get_int(0, 0, MAX_ROOM_MONSTERS)
 
     for i in range(monster_amount):
@@ -103,15 +104,15 @@ def place_map_objects(room):
         y = libtcodpy.random_get_int(0, room.y1, room.y2)
 
         if libtcodpy.random_get_int(0, 0, 100) < 80:  # 80 % chance of orc
-            fighter_component = Fighter(hp=10, defence=0, power=3, death_function=monster_death)
-            ai_component = BasicMonster()
-            monster = GameObject(x, y, 'orc', 'o', libtcodpy.desaturated_green, is_walkable=False,
-                                 fighter=fighter_component, ai=ai_component)
+            fighter_component = components.Fighter(hp=10, defence=0, power=3, death_function=ai.monster_death)
+            ai_component = ai(ai.basic_monster)
+            monster = components.GameObject(x, y, 'orc', 'o', libtcodpy.desaturated_green, is_walkable=False,
+                                            fighter=fighter_component, ai=ai_component)
         else:
-            fighter_component = Fighter(hp=16, defence=1, power=4, death_function=monster_death)
-            ai_component = BasicMonster()
-            monster = GameObject(x, y, 'troll', 'T', libtcodpy.darker_green, is_walkable=False,
-                                 fighter=fighter_component, ai=ai_component)  # Troll
+            fighter_component = components.Fighter(hp=16, defence=1, power=4, death_function=ai.monster_death)
+            ai_component = ai(ai.basic_monster)
+            monster = components.GameObject(x, y, 'troll', 'T', libtcodpy.darker_green, is_walkable=False,
+                                            fighter=fighter_component, ai=ai_component)  # Troll
 
-        if tile_is_walkable(x, y):
-            game_objects.append(monster)
+        if new_map.is_walkable(x, y):
+            new_map.game_objects.append(monster)

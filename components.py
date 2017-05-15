@@ -27,7 +27,6 @@ class Entity:
         return math.sqrt(dx ** 2 + dy ** 2)
 
 
-
 class Component:
     def set_owner(self, entity):
         self.owner = entity
@@ -44,7 +43,7 @@ class Fighter:
     def take_damage(self, damage):
         if damage > 0:
             self.hp -= damage
-            if self.hp <=0:
+            if self.hp <= 0:
                 d_function = self.death_function
                 if d_function is not None:
                     d_function(self.owner)
