@@ -3,6 +3,7 @@ import actions
 import components
 import mapmaker
 import renderer
+import log
 
 
 def player_move_or_attack(player, dx, dy):
@@ -30,8 +31,10 @@ def player_death(player):
     player.symbol_color = libtcodpy.dark_red
 
 
-def handle_keys(player):
-    key = libtcodpy.console_wait_for_keypress(True)
+def handle_input(player):
+
+    key = libtcodpy.console_wait_for_keypress()
+
     if key.vk == libtcodpy.KEY_ENTER and key.lalt:
         libtcodpy.console_set_fullscreen(not libtcodpy.console_is_fullscreen())
 
@@ -72,7 +75,8 @@ def new_game():
     fighter_component = components.Fighter(hp=30, defence=2, power=5, death_function=player_death)
     player = components.Entity(0, 0, 'player', '@', libtcodpy.white, is_walkable=False, fighter=fighter_component)
     player.game_state = 'playing'
-
+    log.init()
+    log.add_message("You enter the vault.")
     player.current_map = mapmaker.make_map(player)
     renderer.clear_console()
 
@@ -89,7 +93,7 @@ def play_game(player):
         for entity in player.current_map.map_entities:
             renderer.clear_entity(entity)
 
-        player_action = handle_keys(player)
+        player_action = handle_input(player)
         if player_action == 'exit':
             break
 

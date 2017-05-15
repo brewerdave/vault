@@ -1,5 +1,6 @@
 import libtcodpy
 import config
+import log
 
 PANEL_Y = config.SCREEN_HEIGHT - config.PANEL_HEIGHT
 
@@ -86,8 +87,15 @@ def render_all(player):
 
     libtcodpy.console_blit(_console, 0, 0, config.MAP_WIDTH, config.MAP_HEIGHT, 0, 0, 0)
 
+    # Handle bottom panel
     libtcodpy.console_set_default_background(_panel, libtcodpy.black)
     libtcodpy.console_clear(_panel)
+
+    y = 1
+    for(line, color) in log.game_messages:
+        libtcodpy.console_set_default_foreground(_panel, color)
+        libtcodpy.console_print_ex(_panel, config.MSG_X, y, libtcodpy.BKGND_NONE, libtcodpy.LEFT, line)
+        y += 1
 
     _render_bar(1, 1, config.BAR_WIDTH, 'HP', player.fighter.hp, player.fighter.max_hp, libtcodpy.light_red,
                 libtcodpy.darker_red)

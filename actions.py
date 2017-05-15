@@ -1,5 +1,5 @@
 import math
-
+import log
 
 def move(entity, dx, dy):
     if entity.current_map.is_tile_walkable(entity.x_pos + dx, entity.y_pos + dy):
@@ -24,6 +24,7 @@ def inflict_damage(actor, fighter, damage):
         fighter.hp -= damage
 
         if fighter.hp <= 0:
+            log.add_message(actor.name.capitalize() + ' kills ' + fighter.owner.name.capitalize() + '!')
             dfunction = fighter.death_function
             if dfunction is not None:
                 dfunction(fighter.owner)
@@ -33,7 +34,11 @@ def attack(fighter, target):
     damage = fighter.power - target.fighter.defence
 
     if damage >= 0:
-        print fighter.owner.name.capitalize() + ' attacks ' + target.name + ' for ' + str(damage) + ' hit points.'
+        log.add_message(
+            fighter.owner.name.capitalize() + ' attacks ' + target.name + ' for ' + str(damage) + ' hit points.'
+        )
         inflict_damage(fighter.owner, target.fighter, damage)
     else:
-        print fighter.owner.name.capitalize() + ' attacks ' + target.name + ' but it has no effect!'
+        log.add_message(
+            fighter.owner.name.capitalize() + ' attacks ' + target.name + ' but it has no effect!'
+        )
