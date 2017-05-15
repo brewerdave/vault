@@ -29,7 +29,7 @@ class Rectangle:
 
 def make_map(player):
     new_map = dungeonmap.DungeonMap(config.MAP_WIDTH, config.MAP_HEIGHT)
-    new_map.map_objects.append(player)
+    new_map.map_entities.append(player)
     player.current_map = new_map
 
     rooms = []
@@ -50,7 +50,7 @@ def make_map(player):
                 break
 
         if not failed:
-            _create_room(new_room)
+            _create_room(new_map, new_room)
 
             (new_x, new_y) = new_room.center()
 
@@ -62,13 +62,13 @@ def make_map(player):
                 (prev_x, prev_y) = rooms[rooms_amount - 1].center()
 
                 if libtcodpy.random_get_int(0, 0, 1) == 1:
-                    _create_horizontal_tunnel(prev_x, new_x, prev_y)
-                    _create_vertical_tunnel(prev_y, new_y, new_x)
+                    _create_horizontal_tunnel(new_map, prev_x, new_x, prev_y)
+                    _create_vertical_tunnel(new_map, prev_y, new_y, new_x)
                 else:
-                    _create_vertical_tunnel(prev_y, new_y, prev_x)
-                    _create_horizontal_tunnel(prev_x, new_x, new_y)
+                    _create_vertical_tunnel(new_map, prev_y, new_y, prev_x)
+                    _create_horizontal_tunnel(new_map, prev_x, new_x, new_y)
 
-            place_map_objects(new_room)
+            place_map_entities(new_map, new_room)
             rooms.append(new_room)
             rooms_amount += 1
 
@@ -96,7 +96,7 @@ def _create_vertical_tunnel(new_map, y1, y2, x):
         new_map.is_transparent[x][y] = True
 
 
-def place_map_objects(new_map, room):
+def place_map_entities(new_map, room):
     monster_amount = libtcodpy.random_get_int(0, 0, MAX_ROOM_MONSTERS)
 
     for i in range(monster_amount):
@@ -105,14 +105,15 @@ def place_map_objects(new_map, room):
 
         if libtcodpy.random_get_int(0, 0, 100) < 80:  # 80 % chance of orc
             fighter_component = components.Fighter(hp=10, defence=0, power=3, death_function=ai.monster_death)
-            ai_component = ai(ai.basic_monster)
-            monster = components.GameObject(x, y, 'orc', 'o', libtcodpy.desaturated_green, is_walkable=False,
-                                            fighter=fighter_component, ai=ai_component)
+            ai_component = components.AI(ai.basic_monster)
+            monster = components.Entity(x, y, 'orc', 'o', libtcodpy.desaturated_green, is_walkable=False,
+                                        fighter=fighter_component, ai=ai_component)
         else:
             fighter_component = components.Fighter(hp=16, defence=1, power=4, death_function=ai.monster_death)
-            ai_component = ai(ai.basic_monster)
-            monster = components.GameObject(x, y, 'troll', 'T', libtcodpy.darker_green, is_walkable=False,
-                                            fighter=fighter_component, ai=ai_component)  # Troll
+            ai_component = components.AI(ai.basic_monster)
+            monster = components.Entity(x, y, 'troll', 'T', libtcodpy.darker_green, is_walkable=False,
+                                        fighter=fighter_component, ai=ai_component)  # Troll
 
-        if new_map.is_walkable(x, y):
-            new_map.game_objects.append(monster)
+        if new_map.is_tile_walkable(x, y):
+            new_map.map_entities.append(monster)
+            monster.current_map = new_map

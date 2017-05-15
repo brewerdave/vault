@@ -2,7 +2,7 @@ import math
 
 
 def move(entity, dx, dy):
-    if entity.current_map.is_walkable(entity.x_pos + dx, entity.y_pos + dy):
+    if entity.current_map.is_tile_walkable(entity.x_pos + dx, entity.y_pos + dy):
         entity.x_pos += dx
         entity.y_pos += dy
         return True

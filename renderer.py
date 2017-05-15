@@ -19,17 +19,17 @@ def clear_console():
     libtcodpy.console_clear(_console)
 
 
-def _draw_game_object(game_object, map, fov_map):
-    if(libtcodpy.map_is_in_fov(fov_map, game_object.x_pos, game_object.y_pos) or
-           (game_object.always_visible and map.explored[game_object.x_pos][game_object.y_pos])):
-        libtcodpy.console_set_default_foreground(_console, game_object.symbol_color)
-        libtcodpy.console_put_char(_console, game_object.x_pos, game_object.y_pos, game_object.symbol,
+def _draw_entity(entity, map, fov_map):
+    if(libtcodpy.map_is_in_fov(fov_map, entity.x_pos, entity.y_pos) or
+            (entity.always_visible and map.explored[entity.x_pos][entity.y_pos])):
+        libtcodpy.console_set_default_foreground(_console, entity.symbol_color)
+        libtcodpy.console_put_char(_console, entity.x_pos, entity.y_pos, entity.symbol,
                                    libtcodpy.BKGND_NONE)
 
 
-def clear_object(game_object):
+def clear_entity(entity):
     global _console
-    libtcodpy.console_put_char(_console, game_object.x_pos, game_object.y_pos, ' ', libtcodpy.BKGND_NONE)
+    libtcodpy.console_put_char(_console, entity.x_pos, entity.y_pos, ' ', libtcodpy.BKGND_NONE)
 
 
 def _set(console, x, y, color, mode):
@@ -55,6 +55,21 @@ def _draw_fov(current_map):
                 current_map.is_explored[x][y] = True
 
 
+def _render_bar(x, y, total_width, name, value, maximum_value, bar_color, back_color):
+    bar_width = int(float(value) / maximum_value * total_width)
+
+    libtcodpy.console_set_default_background(_panel, back_color)
+    libtcodpy.console_rect(_panel, x, y, total_width, 1, False, libtcodpy.BKGND_SCREEN)
+
+    libtcodpy.console_set_default_background(_panel, bar_color)
+    if bar_width > 0:
+        libtcodpy.console_rect(_panel, x, y, bar_width, 1, False, libtcodpy.BKGND_SCREEN)
+
+    libtcodpy.console_set_default_foreground(_panel, libtcodpy.white)
+    libtcodpy.console_print_ex(_panel, x + total_width / 2, y, libtcodpy.BKGND_NONE, libtcodpy.CENTER,
+                               name + ': ' + str(value) + '/' + str(maximum_value))
+
+
 def render_all(player):
     global _console, _panel
 
@@ -64,14 +79,17 @@ def render_all(player):
                                   config.FOV_LIGHT_WALLS, config.FOV_ALGORITHM)
     _draw_fov(current_map)
 
-    for game_object in current_map.game_objects:
-        if game_object != player:
-            _draw_game_object(game_object, current_map, current_map.fov_map)
-    _draw_game_object(player, current_map, current_map.fov_map)
+    for entity in current_map.map_entities:
+        if entity != player:
+            _draw_entity(entity, current_map, current_map.fov_map)
+    _draw_entity(player, current_map, current_map.fov_map)
 
     libtcodpy.console_blit(_console, 0, 0, config.MAP_WIDTH, config.MAP_HEIGHT, 0, 0, 0)
 
     libtcodpy.console_set_default_background(_panel, libtcodpy.black)
     libtcodpy.console_clear(_panel)
 
-    libtcodpy.console_blit(_panel, 0, 0, config.SCREEN_WIDTH, config.SCREEN_HEIGHT, config.PANEL_HEIGHT, 0, 0, PANEL_Y)
+    _render_bar(1, 1, config.BAR_WIDTH, 'HP', player.fighter.hp, player.fighter.max_hp, libtcodpy.light_red,
+                libtcodpy.darker_red)
+
+    libtcodpy.console_blit(_panel, 0, 0, config.SCREEN_WIDTH, config.PANEL_HEIGHT, 0, 0, PANEL_Y)

@@ -32,7 +32,7 @@ class Component:
         self.owner = entity
 
 
-class Fighter:
+class Fighter(Component):
     def __init__(self, hp, defence, power, death_function=None):
         self.max_hp = hp
         self.hp = hp
@@ -56,3 +56,11 @@ class Fighter:
             target.fighter.take_damage(damage)
         else:
             print self.owner.name.capitalize() + ' attacks ' + target.name + ' but it has no effect!'
+
+
+class AI(Component):
+    def __init__(self, take_turn):
+        self.turn_function = take_turn
+
+    def take_turn(self, player):
+        self.turn_function(self.owner, player)
