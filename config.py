@@ -1,0 +1,19 @@
+import libtcodpy
+
+SCREEN_WIDTH = 80
+SCREEN_HEIGHT = 50
+
+MAP_WIDTH = 80
+MAP_HEIGHT = 45
+
+PANEL_HEIGHT = 7
+BAR_WIDTH = 20
+
+FOV_ALGORITHM = libtcodpy.FOV_PERMISSIVE_4
+FOV_LIGHT_WALLS = True
+TORCH_RADIUS = 10
+
+COLOR_DARK_WALL = libtcodpy.Color(0, 0, 100)
+COLOR_LIGHT_WALL = libtcodpy.Color(130, 110, 50)
+COLOR_DARK_GROUND = libtcodpy.Color(50, 50, 150)
+COLOR_LIGHT_GROUND = libtcodpy.Color(200, 180, 50)
