@@ -8,6 +8,7 @@ ROOM_MAX_SIZE = 10
 ROOM_MIN_SIZE = 6
 MAX_ROOMS = 30
 MAX_ROOM_MONSTERS = 3
+MAX_ROOM_ITEMS = 3
 
 
 class Rectangle:
@@ -98,10 +99,22 @@ def _create_vertical_tunnel(new_map, y1, y2, x):
 
 def place_map_entities(new_map, room):
     monster_amount = libtcodpy.random_get_int(0, 0, MAX_ROOM_MONSTERS)
+    items_amount = libtcodpy.random_get_int(0, 0, MAX_ROOM_ITEMS)
+
+    for i in range(items_amount):
+        x = libtcodpy.random_get_int(0, room.x1+1, room.x2-1)
+        y = libtcodpy.random_get_int(0, room.y1+1, room.y2-1)
+
+        if new_map.is_tile_walkable(x, y):
+            item_component = components.Item()
+            item = components.Entity(x, y, 'healing potion', '!', libtcodpy.violet,
+                                     is_walkable=True, item=item_component)
+
+            new_map.map_entities.insert(0, item)
 
     for i in range(monster_amount):
-        x = libtcodpy.random_get_int(0, room.x1, room.x2)
-        y = libtcodpy.random_get_int(0, room.y1, room.y2)
+        x = libtcodpy.random_get_int(0, room.x1 + 1, room.x2 - 1)
+        y = libtcodpy.random_get_int(0, room.y1 + 1, room.y2 - 1)
 
         if libtcodpy.random_get_int(0, 0, 100) < 80:  # 80 % chance of orc
             fighter_component = components.Fighter(hp=10, defence=0, power=3, death_function=ai.monster_death)

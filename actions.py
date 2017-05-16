@@ -1,5 +1,6 @@
 import math
 import log
+import libtcodpy
 
 def move(entity, dx, dy):
     if entity.current_map.is_tile_walkable(entity.x_pos + dx, entity.y_pos + dy):
@@ -42,3 +43,12 @@ def attack(fighter, target):
         log.add_message(
             fighter.owner.name.capitalize() + ' attacks ' + target.name + ' but it has no effect!'
         )
+
+
+def pick_up_item(player, item):
+    if len(player.inventory) >= player.inventory_size:
+        log.add_message("Inventory is full!", libtcodpy.light_red)
+    else:
+        player.inventory.append(item)
+        player.current_map.map_entities.remove(item)
+        log.add_message("Picked up " + item.name, libtcodpy.light_green)

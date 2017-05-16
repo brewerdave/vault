@@ -3,7 +3,7 @@ import math
 
 class Entity:
     def __init__(self, x_pos, y_pos, name, symbol, symbol_color, is_walkable=False, always_visible=False,
-                 fighter=None, ai=None):
+                 fighter=None, ai=None, item=None):
         self.x_pos = x_pos
         self.y_pos = y_pos
         self.name = name
@@ -16,6 +16,8 @@ class Entity:
         self._set_owner(fighter)
         self.ai = ai
         self._set_owner(ai)
+        self.item = item
+        self._set_owner(item)
 
     def _set_owner(self, component):
         if component:
@@ -30,6 +32,11 @@ class Entity:
 class Component:
     def set_owner(self, entity):
         self.owner = entity
+
+
+class Item(Component):
+    def __init__(self, use_function=None):
+        self.use_function = use_function
 
 
 class Fighter(Component):

@@ -11,7 +11,6 @@ def basic_monster(monster, player):
 
 
 def monster_death(monster):
-    print monster.name.capitalize() + ' is dead!'
     monster.symbol = '%'
     monster.symbol_color = libtcodpy.dark_red
     monster.is_walkable = True
