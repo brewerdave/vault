@@ -4,6 +4,7 @@ import components
 import mapmaker
 import renderer
 import log
+import ui
 
 
 def player_move_or_attack(player, dx, dy):
@@ -32,39 +33,38 @@ def player_death(player):
 
 
 def handle_input(player):
+    ui.poll()
 
-    key = libtcodpy.console_wait_for_keypress()
-
-    if key.vk == libtcodpy.KEY_ENTER and key.lalt:
+    if ui.key.vk == libtcodpy.KEY_ENTER and ui.key.lalt:
         libtcodpy.console_set_fullscreen(not libtcodpy.console_is_fullscreen())
 
-    elif key.vk == libtcodpy.KEY_ESCAPE:
+    elif ui.key.vk == libtcodpy.KEY_ESCAPE:
         return 'exit'
 
     if player.game_state == 'playing':
 
-        if libtcodpy.console_is_key_pressed(libtcodpy.KEY_UP) or chr(key.c) == 'k':
+        if libtcodpy.console_is_key_pressed(libtcodpy.KEY_UP) or chr(ui.key.c) == 'k':
             player_move_or_attack(player, 0, -1)
 
-        elif libtcodpy.console_is_key_pressed(libtcodpy.KEY_DOWN) or chr(key.c) == 'j':
+        elif libtcodpy.console_is_key_pressed(libtcodpy.KEY_DOWN) or chr(ui.key.c) == 'j':
             player_move_or_attack(player, 0, 1)
 
-        elif libtcodpy.console_is_key_pressed(libtcodpy.KEY_LEFT) or chr(key.c) == 'h':
+        elif libtcodpy.console_is_key_pressed(libtcodpy.KEY_LEFT) or chr(ui.key.c) == 'h':
             player_move_or_attack(player, -1, 0)
 
-        elif libtcodpy.console_is_key_pressed(libtcodpy.KEY_RIGHT) or chr(key.c) == 'l':
+        elif libtcodpy.console_is_key_pressed(libtcodpy.KEY_RIGHT) or chr(ui.key.c) == 'l':
             player_move_or_attack(player, 1, 0)
 
-        elif chr(key.c) == 'u':
+        elif chr(ui.key.c) == 'u':
             player_move_or_attack(player, 1, -1)
 
-        elif chr(key.c) == 'y':
+        elif chr(ui.key.c) == 'y':
             player_move_or_attack(player, -1, -1)
 
-        elif chr(key.c) == 'n':
+        elif chr(ui.key.c) == 'n':
             player_move_or_attack(player, 1, 1)
 
-        elif chr(key.c) == 'b':
+        elif chr(ui.key.c) == 'b':
             player_move_or_attack(player, -1, 1)
 
         else:
@@ -84,6 +84,8 @@ def new_game():
 
 
 def play_game(player):
+    ui.init()
+
     while not libtcodpy.console_is_window_closed():
         renderer.render_all(player)
         player.current_map.fov_needs_recompute = False

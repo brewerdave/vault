@@ -1,6 +1,7 @@
 import libtcodpy
 import config
 import log
+import ui
 
 PANEL_Y = config.SCREEN_HEIGHT - config.PANEL_HEIGHT
 
@@ -8,6 +9,7 @@ PANEL_Y = config.SCREEN_HEIGHT - config.PANEL_HEIGHT
 def renderer_init():
     global _console
     global _panel
+
     libtcodpy.console_set_custom_font('fonts/arial12x12.png', libtcodpy.FONT_TYPE_GREYSCALE |
                                       libtcodpy.FONT_LAYOUT_TCOD)
     libtcodpy.console_init_root(config.SCREEN_WIDTH, config.SCREEN_HEIGHT, 'vault', False)
@@ -71,6 +73,16 @@ def _render_bar(x, y, total_width, name, value, maximum_value, bar_color, back_c
                                name + ': ' + str(value) + '/' + str(maximum_value))
 
 
+def _get_names_under_mouse(entities, fov_map, mouse):
+    (x,y) = (mouse.cx, mouse.cy)
+    names = [entity.name for entity in entities
+             if entity.x_pos == x and entity.y_pos == y and
+             libtcodpy.map_is_in_fov(fov_map, entity.x_pos, entity.y_pos)]
+
+    names = ', '.join(names)
+    return names.capitalize()
+
+
 def render_all(player):
     global _console, _panel
 
@@ -91,13 +103,20 @@ def render_all(player):
     libtcodpy.console_set_default_background(_panel, libtcodpy.black)
     libtcodpy.console_clear(_panel)
 
+    # Message Log
     y = 1
     for(line, color) in log.game_messages:
         libtcodpy.console_set_default_foreground(_panel, color)
         libtcodpy.console_print_ex(_panel, config.MSG_X, y, libtcodpy.BKGND_NONE, libtcodpy.LEFT, line)
         y += 1
 
+    # Halth Bar
     _render_bar(1, 1, config.BAR_WIDTH, 'HP', player.fighter.hp, player.fighter.max_hp, libtcodpy.light_red,
                 libtcodpy.darker_red)
+
+    # Items under mouse
+    libtcodpy.console_set_default_foreground(_panel, libtcodpy.light_grey)
+    libtcodpy.console_print_ex(_panel, 1, 0, libtcodpy.BKGND_NONE, libtcodpy.LEFT,
+                               _get_names_under_mouse(current_map.map_entities, current_map.fov_map, ui.mouse))
 
     libtcodpy.console_blit(_panel, 0, 0, config.SCREEN_WIDTH, config.PANEL_HEIGHT, 0, 0, PANEL_Y)
