@@ -52,3 +52,20 @@ def pick_up_item(player, item):
         player.inventory.append(item)
         player.current_map.map_entities.remove(item)
         log.add_message("Picked up " + item.name, libtcodpy.light_green)
+
+
+def use(player, entity):
+    if entity.item.use_function is None:
+        log.add_message(entity.name + ' cannot be used.')
+    elif entity.item.use_function(player) != 'cancelled':
+        if entity.item.count > 1:
+            entity.item.count -= 1
+        else:
+            player.inventory.remove(entity)
+
+
+def heal(fighter, amount):
+    fighter.hp += amount
+
+    if fighter.hp > fighter.max_hp:
+        fighter.hp = fighter.max_hp

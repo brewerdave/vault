@@ -35,11 +35,13 @@ def player_death(player):
 
 def inventory_menu(player, header):
     if len(player.inventory) == 0:
-        options = ['Inventory is empty.']
+        renderer.menu(header, 'Inventory is empty.', config.INVENTORY_WIDTH)
+        return None
     else:
         options = [item.name for item in player.inventory]
 
     index = renderer.menu(header, options, config.INVENTORY_WIDTH)
+    return player.inventory[index].item
 
 
 def handle_input(player):
@@ -85,7 +87,9 @@ def handle_input(player):
                         break
 
             if chr(ui.key.c) == 'i':
-                inventory_menu(player, 'Inventory')
+                chosen_item = inventory_menu(player, 'Inventory')
+                if chosen_item is not None:
+                    actions.use(player, chosen_item.owner)
 
             return 'didnt-take-turn'
 
@@ -98,7 +102,7 @@ def new_game():
     player.inventory_size = 26
     player.game_state = 'playing'
     log.init()
-    log.add_message("You enter the vault.")
+    log.add_message("You awaken in a vault.")
     player.current_map = mapmaker.make_map(player)
     renderer.clear_console()
 

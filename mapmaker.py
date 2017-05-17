@@ -3,6 +3,7 @@ import dungeonmap
 import config
 import components
 import ai
+import spells
 
 ROOM_MAX_SIZE = 10
 ROOM_MIN_SIZE = 6
@@ -106,7 +107,7 @@ def place_map_entities(new_map, room):
         y = libtcodpy.random_get_int(0, room.y1+1, room.y2-1)
 
         if new_map.is_tile_walkable(x, y):
-            item_component = components.Item()
+            item_component = components.Item('A healing potion', use_function=spells.cast_heal)
             item = components.Entity(x, y, 'healing potion', config.TILE_HEALING_POTION, libtcodpy.violet,
                                      is_walkable=True, item=item_component)
 

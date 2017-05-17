@@ -35,8 +35,10 @@ class Component:
 
 
 class Item(Component):
-    def __init__(self, use_function=None):
+    def __init__(self, description, count=1, use_function=None):
         self.use_function = use_function
+        self.description = description
+        self.count = count
 
 
 class Fighter(Component):
