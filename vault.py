@@ -5,6 +5,7 @@ import mapmaker
 import renderer
 import log
 import ui
+import config
 
 
 def player_move_or_attack(player, dx, dy):
@@ -30,6 +31,15 @@ def player_death(player):
 
     player.symbol = '%'
     player.symbol_color = libtcodpy.dark_red
+
+
+def inventory_menu(player, header):
+    if len(player.inventory) == 0:
+        options = ['Inventory is empty.']
+    else:
+        options = [item.name for item in player.inventory]
+
+    index = renderer.menu(header, options, config.INVENTORY_WIDTH)
 
 
 def handle_input(player):
@@ -74,12 +84,16 @@ def handle_input(player):
                         actions.pick_up_item(player, entity)
                         break
 
+            if chr(ui.key.c) == 'i':
+                inventory_menu(player, 'Inventory')
+
             return 'didnt-take-turn'
 
 
 def new_game():
     fighter_component = components.Fighter(hp=30, defence=2, power=5, death_function=player_death)
-    player = components.Entity(0, 0, 'player', '@', libtcodpy.white, is_walkable=False, fighter=fighter_component)
+    player = components.Entity(0, 0, 'player', config.TILE_PLAYER, libtcodpy.white, is_walkable=False,
+                               fighter=fighter_component)
     player.inventory = []
     player.inventory_size = 26
     player.game_state = 'playing'

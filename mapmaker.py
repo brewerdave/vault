@@ -107,7 +107,7 @@ def place_map_entities(new_map, room):
 
         if new_map.is_tile_walkable(x, y):
             item_component = components.Item()
-            item = components.Entity(x, y, 'healing potion', '!', libtcodpy.violet,
+            item = components.Entity(x, y, 'healing potion', config.TILE_HEALING_POTION, libtcodpy.violet,
                                      is_walkable=True, item=item_component)
 
             new_map.map_entities.insert(0, item)
@@ -119,12 +119,12 @@ def place_map_entities(new_map, room):
         if libtcodpy.random_get_int(0, 0, 100) < 80:  # 80 % chance of orc
             fighter_component = components.Fighter(hp=10, defence=0, power=3, death_function=ai.monster_death)
             ai_component = components.AI(ai.basic_monster)
-            monster = components.Entity(x, y, 'orc', 'o', libtcodpy.desaturated_green, is_walkable=False,
+            monster = components.Entity(x, y, 'orc', config.TILE_ORC, libtcodpy.desaturated_green, is_walkable=False,
                                         fighter=fighter_component, ai=ai_component)
         else:
             fighter_component = components.Fighter(hp=16, defence=1, power=4, death_function=ai.monster_death)
             ai_component = components.AI(ai.basic_monster)
-            monster = components.Entity(x, y, 'troll', 'T', libtcodpy.darker_green, is_walkable=False,
+            monster = components.Entity(x, y, 'troll', config.TILE_TROLL, libtcodpy.darker_green, is_walkable=False,
                                         fighter=fighter_component, ai=ai_component)  # Troll
 
         if new_map.is_tile_walkable(x, y):
