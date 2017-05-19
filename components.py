@@ -1,4 +1,5 @@
 import math
+import log
 
 
 class Entity:
@@ -27,6 +28,9 @@ class Entity:
         dx = other.x_pos - self.x_pos
         dy = other.y_pos - self.y_pos
         return math.sqrt(dx ** 2 + dy ** 2)
+
+    def distance(self, x, y):
+        return math.sqrt((x - self.x_pos) ** 2 + (y - self.y_pos) ** 2)
 
 
 class Component:
@@ -61,10 +65,9 @@ class Fighter(Component):
         damage = self.power - target.fighter.defence
 
         if damage > 0:
-            print self.owner.name.capitalize() + ' attacks ' + target.name + ' for ' + str(damage) + ' hit points.'
             target.fighter.take_damage(damage)
         else:
-            print self.owner.name.capitalize() + ' attacks ' + target.name + ' but it has no effect!'
+            log.add_message(self.owner.name.capitalize() + ' attacks ' + target.name + ' but it has no effect!')
 
 
 class AI(Component):
